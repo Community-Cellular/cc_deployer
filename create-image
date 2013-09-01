@@ -1,0 +1,31 @@
+#!/bin/bash
+
+source settingsrc
+
+echo Creating one big partition on the target disk $INSTALL_DISK
+
+parted -s $INSTALL_DISK mklabel msdos
+parted -s --align=none $INSTALL_DISK mkpart primary 1MB 100%
+
+echo Creating root file system
+mkfs -t $FS_TYPE $INSTALL_DISK\1
+
+echo Mounting root file system
+mkdir -p $CHROOT
+mount $INSTALL_DISK\1 $CHROOT
+
+echo Installing base ubuntu system
+debootstrap $UBUNTU_DISTRO $CHROOT http://archive.ubuntu.com/ubuntu/
+
+mount -t proc none $CHROOT/proc
+mount -t devtmpfs none $CHROOT/dev
+mount -t sysfs none $CHROOT/sys
+
+./create-image-chroot-part
+
+umount $CHROOT/sys
+umount $CHROOT/dev
+umount $CHROOT/proc
+umount $CHROOT
+
+echo "You're ready to go! :)"

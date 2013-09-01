@@ -1,0 +1,24 @@
+#!/bin/bash
+
+source settingsrc
+
+cp static/sources.list $CHROOT/etc/apt/sources.list
+cp static/fstab $CHROOT/etc/fstab
+
+chroot $CHROOT <<EOF
+export DEBIAN_FRONTEND=noninteractive
+apt-get -y update
+apt-get -y install linux-image-generic
+grub-install $INSTALL_DISK
+update-grub
+
+# Set password of root to 'root'
+passwd root <<__END__
+root
+root
+__END__
+
+hostname rhizomatica
+echo "rhizomatica" > /etc/hostname
+
+EOF

@@ -1,0 +1,4 @@
+FS_TYPE=ext4
+INSTALL_DISK=/dev/sdb
+CHROOT=/mnt/disk
+UBUNTU_DISTRO=precise
